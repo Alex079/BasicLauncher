@@ -1,0 +1,13 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="app.meal.basiclauncher.SettingsActivity$AppearancePreferenceFragment"
+        android:icon="@android:drawable/ic_menu_gallery"
+        android:title="@string/pref_header_appearance" />
+
+    <header
+        android:fragment="app.meal.basiclauncher.SettingsActivity$SystemPreferenceFragment"
+        android:icon="@android:drawable/ic_menu_manage"
+        android:title="@string/pref_header_system" />
+
+</preference-headers>

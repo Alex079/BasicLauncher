@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Appearance -->
+    <string name="pref_header_appearance">Appearance</string>
+    <!-- Appearance -->
+    <string name="clock_format_key" translatable="false">clock_format</string>
+    <string name="clock_format_title">Clock format</string>
+    <string name="clock_format_summary" translatable="false">@string/clock_format_default</string>
+    <string name="clock_format_default" translatable="false">kk:mm:ss</string>
+
+    <string name="clock_font_size_key" translatable="false">clock_font_size</string>
+    <string name="clock_font_size_title">Clock font size</string>
+    <string name="clock_font_size_summary">Font size (20&#8211;70)</string>
+    <integer name="clock_font_size_default">60</integer>
+    <integer name="clock_font_size_min">20</integer>
+    <integer name="clock_font_size_max">70</integer>
+
+    <string name="icons_follow_key" translatable="false">icons_follow</string>
+    <string name="icons_follow_title">Follow rotation</string>
+    <string name="icons_follow_summary">Home screen icons will be positioned according to device orientation</string>
+    <string name="icons_follow_summary_off">Home screen icons will be positioned from top left corner in any device orientation</string>
+    <bool name="icons_follow_default">true</bool>
+
+    <string name="dock_size_key" translatable="false">dock_size</string>
+    <string name="dock_size_title">Dock size</string>
+    <string name="dock_size_summary">Size of the square dock in the home screen (1–9)</string>
+    <integer name="dock_size_default">5</integer>
+    <integer name="dock_size_min">1</integer>
+    <integer name="dock_size_max">9</integer>
+
+    <integer name="application_list_columns">3</integer>
+    <integer name="dock_animation_duration_default">200</integer>
+
+    <!-- System -->
+    <string name="pref_header_system">System</string>
+    <!-- System -->
+    <string name="wallpaper_title">Wallpaper</string>
+    <string name="wallpaper_summary">Set system wallpaper</string>
+    <string name="system_clock_title">Clock</string>
+    <string name="system_clock_summary">Set system clock</string>
+
+</resources>

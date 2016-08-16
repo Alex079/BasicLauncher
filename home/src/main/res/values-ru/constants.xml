@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="application_name">Basic Launcher</string>
+    <string name="title_activity_main">Basic Launcher</string>
+    <string name="title_activity_settings">Launcher Settings</string>
+    <string name="button_settings">Настройки</string>
+    <!--<string name="app_is_gone">*удалено*</string>-->
+    <string name="home_screen_is_full">Невозможно разместить ссылку, домашний экран заполнен</string>
+
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!--<app.meal.basiclauncher.view.ClockView
+            android:id="@+id/mainClock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:textSize="@dimen/clock_text_size"
+            android:textColor="@android:color/white"
+            android:shadowColor="@android:color/black"
+            android:shadowRadius="@integer/large_shadow"
+            android:layout_marginStart="@dimen/small_spacing"
+            android:layout_marginLeft="@dimen/small_spacing" />-->
+
+        <app.meal.basiclauncher.view.CellLayout
+            android:id="@+id/applicationDock"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="@dimen/normal_spacing"
+            android:layout_marginLeft="@dimen/normal_spacing"
+            android:layout_marginRight="@dimen/normal_spacing"/>
+
+    </RelativeLayout>
+
+    <fragment
+        android:id="@+id/applicationListDrawer"
+        android:name="app.meal.basiclauncher.fragment.ApplicationListFragment"
+        tools:layout="@layout/fragment_application_list"
+        android:layout_width="@dimen/drawer_size"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/normal_spacing"
+        android:layout_marginBottom="@dimen/normal_spacing"
+        android:layout_gravity="end"/>
+
+</android.support.v4.widget.DrawerLayout>

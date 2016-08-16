@@ -1,0 +1,73 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="Clock appearance">
+
+        <EditTextPreference
+            android:key="@string/clock_format_key"
+            android:title="@string/clock_format_title"
+            android:summary="@string/clock_format_summary"
+            android:defaultValue="@string/clock_format_default"/>
+
+        <app.meal.basiclauncher.preference.NumberRangePreference
+            android:key="@string/clock_font_size_key"
+            android:title="@string/clock_font_size_title"
+            android:summary="@string/clock_font_size_summary"
+            android:defaultValue="@integer/clock_font_size_default"
+            app:minValue="@integer/clock_font_size_min"
+            app:maxValue="@integer/clock_font_size_max"
+            android:widgetLayout="@layout/number_range_preference"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Dock appearance">
+
+        <SwitchPreference
+            android:key="@string/icons_follow_key"
+            android:title="@string/icons_follow_title"
+            android:summaryOn="@string/icons_follow_summary"
+            android:summaryOff="@string/icons_follow_summary_off"
+            android:defaultValue="true"/>
+
+        <app.meal.basiclauncher.preference.NumberRangePreference
+            android:key="@string/dock_size_key"
+            android:title="@string/dock_size_title"
+            android:summary="@string/dock_size_summary"
+            android:defaultValue="@integer/dock_size_default"
+            app:minValue="@integer/dock_size_min"
+            app:maxValue="@integer/dock_size_max"
+            android:widgetLayout="@layout/number_range_preference"/>
+
+    </PreferenceCategory>
+
+    <!--<CheckBoxPreference
+        android:defaultValue="true"
+        android:key="example_switch"
+        android:summary="@string/pref_description_social_recommendations"
+        android:title="@string/pref_title_social_recommendations" />
+
+    &lt;!&ndash; NOTE: EditTextPreference accepts EditText attributes. &ndash;&gt;
+    &lt;!&ndash; NOTE: EditTextPreference's summary should be set to its value by the activity code. &ndash;&gt;
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_display_name"
+        android:inputType="textCapWords"
+        android:key="example_text"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_title_display_name" />
+
+    &lt;!&ndash; NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. &ndash;&gt;
+    &lt;!&ndash; NOTE: ListPreference's summary should be set to its value by the activity code. &ndash;&gt;
+    <ListPreference
+        android:defaultValue="-1"
+        android:entries="@array/pref_example_list_titles"
+        android:entryValues="@array/pref_example_list_values"
+        android:key="example_list"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_title_add_friends_to_messages" />-->
+
+</PreferenceScreen>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/applicationListItemIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="@dimen/item_icon_size"
+        android:maxHeight="@dimen/item_icon_size"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/image_content_description"/>
+
+    <TextView
+        android:id="@+id/applicationListItemLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/applicationListItemIcon"
+        android:maxWidth="@dimen/item_text_width"
+        android:gravity="center"
+        android:textColor="@android:color/white"
+        android:shadowColor="@android:color/black"
+        android:shadowRadius="@integer/small_shadow"
+        android:layout_centerHorizontal="true"
+        android:textSize="@dimen/item_text_size"/>
+
+</RelativeLayout>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="NumberRangePreference">
+        <attr name="minValue" format="integer"/>
+        <attr name="maxValue" format="integer"/>
+        <attr name="longStep" format="integer"/>
+    </declare-styleable>
+
+    <integer name="number_range_default_min_value">1</integer>
+    <integer name="number_range_default_max_value">10</integer>
+    <integer name="number_range_default_value">5</integer>
+    <integer name="number_range_default_long_step">10</integer>
+
+</resources>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+    <ImageView
+        android:id="@+id/button_up"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_plus"
+        android:contentDescription="@string/image_content_description"
+        android:background="?android:listChoiceBackgroundIndicator"/>
+    <TextView
+        android:id="@+id/current_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@+id/button_up"
+        android:layout_toRightOf="@+id/button_up"
+        android:layout_centerVertical="true"
+        android:minWidth="30dp"
+        android:gravity="center"/>
+    <ImageView
+        android:id="@+id/button_down"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/ic_minus"
+        android:contentDescription="@string/image_content_description"
+        android:layout_toEndOf="@+id/current_value"
+        android:layout_toRightOf="@+id/current_value"
+        android:background="?android:listChoiceBackgroundIndicator"/>
+</RelativeLayout>
