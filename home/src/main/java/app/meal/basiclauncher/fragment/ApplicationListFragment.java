@@ -66,7 +66,6 @@ public class ApplicationListFragment extends Fragment implements LoaderCallbacks
             }
         });
 
-
         getLoaderManager().initLoader(0, savedInstanceState, this);
     }
 
@@ -76,8 +75,8 @@ public class ApplicationListFragment extends Fragment implements LoaderCallbacks
     }
 
     @Override
-    public void onLoadFinished(Loader<List<ApplicationData>> loader, List<ApplicationData> pairs) {
-        viewAdapter.setData(pairs);
+    public void onLoadFinished(Loader<List<ApplicationData>> loader, List<ApplicationData> data) {
+        viewAdapter.setData(data);
         viewAdapter.notifyDataSetChanged();
     }
 

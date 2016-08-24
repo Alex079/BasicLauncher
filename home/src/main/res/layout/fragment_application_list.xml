@@ -32,6 +32,7 @@
     <GridView
         android:id="@+id/applicationList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:numColumns="@integer/application_list_columns"/>
+        android:layout_height="match_parent"
+        android:numColumns="auto_fit"
+        android:columnWidth="@dimen/item_text_width"/>
 </LinearLayout>

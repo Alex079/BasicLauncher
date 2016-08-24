@@ -5,11 +5,9 @@ import android.app.Activity;
 import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -18,10 +16,12 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -62,7 +62,7 @@ public class CellLayout extends RelativeLayout {
     private int gridWidth = 0;
     private int gridHeight = 0;
     private boolean followRotation = getResources().getBoolean(R.bool.icons_follow_default);
-    private final AppWidgetHost appWidgetHost = new AppWidgetHost(getContext(), R.integer.app_widget_host_id);
+    private final AppWidgetHost appWidgetHost = isInEditMode() ? null : new AppWidgetHost(getContext(), R.integer.app_widget_host_id);
 
     private View viewBeingDragged;
     private Point previousPoint;
@@ -80,17 +80,21 @@ public class CellLayout extends RelativeLayout {
         }
     }
 
-    public void setGridSize(int gridSize, boolean layout) {
-        if (this.gridSize != gridSize) {
-            this.gridSize = gridSize;
-            int width = getMeasuredWidth();
-            int height = getMeasuredHeight();
-            cellSize = Math.min(width, height) / gridSize;
-            gridWidth = width / cellSize;
-            gridHeight = height / cellSize;
-            if (layout) {
-                redoLayout();
-            }
+    public void setGridSize(int newGridSize, final boolean layout) {
+        if (gridSize != newGridSize) {
+            gridSize = newGridSize;
+            post(new Runnable() {
+                @Override public void run() {
+                    int width = getMeasuredWidth();
+                    int height = getMeasuredHeight();
+                    cellSize = Math.min(width, height) / gridSize;
+                    gridWidth = width / cellSize;
+                    gridHeight = height / cellSize;
+                    if (layout) {
+                        redoLayout();
+                    }
+                }
+            });
         }
     }
 
@@ -99,19 +103,28 @@ public class CellLayout extends RelativeLayout {
     }
 
     public void placeWidget(int id) {
-        WidgetData data = new WidgetData(id);
+        WidgetData data = new WidgetData(id, AppWidgetManager.getInstance(getContext()).getAppWidgetInfo(id));
         int position = choosePosition();
         layoutState.put(position, data);
-        View view = getTargetView(data);
-        view.setVisibility(INVISIBLE);
+        final AppWidgetHostView view = getTargetView(data);
+        int width = view.getAppWidgetInfo().minWidth / cellSize;
+        if (view.getAppWidgetInfo().minWidth % cellSize == 0) width--;
+        int height = view.getAppWidgetInfo().minHeight / cellSize;
+        if (view.getAppWidgetInfo().minHeight % cellSize == 0) height--;
         view.setTag(R.integer.tag_position_start, position);
+        final Point p = getPoint(position);
+        view.setTag(R.integer.tag_position_end, getNumber(p.x+width, p.y+height));
+        view.setVisibility(INVISIBLE);
         addView(view);
 //        int width = view.getAppWidgetInfo().minWidth / cellSize;
 //        int height = view.getAppWidgetInfo().minHeight / cellSize;
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        Point p = getPoint(position);
-        repositionView(view, p.x, p.y, false);
-        view.setVisibility(VISIBLE);
+        view.post(new Runnable() {
+            @Override public void run() {
+                resizeView(view);
+                repositionView(view, p.x, p.y, false);
+                view.setVisibility(VISIBLE);
+            }
+        });
     }
 
     @Override
@@ -128,6 +141,7 @@ public class CellLayout extends RelativeLayout {
                             MeasureSpec.getMode(heightMeasureSpec)));
         }
         cellSize = Math.min(getMeasuredWidth(), getMeasuredHeight()) / gridSize;
+        Log.w("Cell Size", String.valueOf(cellSize));
         gridWidth = getMeasuredWidth() / cellSize;
         gridHeight = getMeasuredHeight() / cellSize;
     }
@@ -158,6 +172,7 @@ public class CellLayout extends RelativeLayout {
                     previousPosition = (Integer) viewBeingDragged.getTag(R.integer.tag_position_start);
                     currentPosition = previousPosition;
                 }
+                viewBeingDragged.setBackgroundColor(getResources().getColor(R.color.dragItem));
                 previousPoint = getPoint(previousPosition);
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
@@ -205,6 +220,11 @@ public class CellLayout extends RelativeLayout {
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 setBackgroundColor(Color.TRANSPARENT);
+                viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
+                ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
+                if (currentPosition < 0 && data instanceof WidgetData) {
+                    appWidgetHost.deleteAppWidgetId(((WidgetData) data).getId());
+                }
                 viewBeingDragged = null;
                 break;
             default:
@@ -270,29 +290,27 @@ public class CellLayout extends RelativeLayout {
         int n = getChildCount();
         for (int i = 0; i < n; i++) {
             View v = getChildAt(i);
-            int number = (Integer) v.getTag(R.integer.tag_position_start);
-            if (number > limit) {
+            int position = (Integer) v.getTag(R.integer.tag_position_start);
+            if (position > limit) {
                 int newPosition = choosePosition();
-                if (newPosition >= 0) {
-                    Point p = getPoint(newPosition);
-                    repositionView(v, p.x, p.y, false);
-                    v.setTag(R.integer.tag_position_start, newPosition);
-                    layoutState.put(newPosition, layoutState.remove(number));
-                } else {
-                    layoutState.remove(number);
+                if (newPosition < 0) {
+                    layoutState.remove(position);
                     removeView(v);
+                    return;
                 }
-            } else {
-                Point p = getPoint(number);
-                repositionView(v, p.x, p.y, false);
+                v.setTag(R.integer.tag_position_start, newPosition);
+                layoutState.put(newPosition, layoutState.remove(position));
+                position = newPosition;
             }
+            resizeView(v);
+            Point p = getPoint(position);
+            repositionView(v, p.x, p.y, false);
         }
     }
 
     private AppWidgetHostView getTargetView(@NonNull WidgetData widgetData) {
-        AppWidgetProviderInfo appWidgetInfo = AppWidgetManager.getInstance(getContext()).getAppWidgetInfo(widgetData.getId());
-        AppWidgetHostView view = appWidgetHost.createView(getContext(), widgetData.getId(), appWidgetInfo);
-        view.setAppWidget(widgetData.getId(), appWidgetInfo);
+        AppWidgetHostView view = appWidgetHost.createView(getContext(), widgetData.getId(), widgetData.getInfo());
+        view.setAppWidget(widgetData.getId(), widgetData.getInfo());
         view.setTag(R.integer.tag_app_data, widgetData);
         view.setOnLongClickListener(new OnLongClickListener() {
             @Override public boolean onLongClick(View view) {
@@ -318,50 +336,59 @@ public class CellLayout extends RelativeLayout {
     }
 
     private View getTargetView(@NonNull ApplicationData applicationData) {
-        View item = LayoutInflater.from(getContext()).inflate(R.layout.item_application_dock, this, false);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.item_application_dock, this, false);
         PackageManager packageManager = getContext().getPackageManager();
-        TextView textView = (TextView) item.findViewById(R.id.applicationListItemLabel);
+        TextView textView = (TextView) view.findViewById(R.id.applicationListItemLabel);
         textView.setMaxWidth(cellSize);
         textView.setText(applicationData.getLabel(packageManager));
-        ((ImageView) item.findViewById(R.id.applicationListItemIcon))
+        ((ImageView) view.findViewById(R.id.applicationListItemIcon))
                 .setImageDrawable(applicationData.getIcon(packageManager));
-        item.setTag(R.integer.tag_app_data, applicationData);
-        final Intent intent = applicationData.getIntent();
-        final String packageName = applicationData.getPackageName();
-        item.setOnClickListener(new OnClickListener() {
-            @Override public void onClick(View view) {
+        view.setTag(R.integer.tag_app_data, applicationData);
+        view.setOnClickListener(new OnClickListener() {
+            @Override public void onClick(View v) {
+                ApplicationData data = (ApplicationData) v.getTag(R.integer.tag_app_data);
                 try {
-                    getContext().startActivity(intent);
+                    getContext().startActivity(data.getIntent());
                 } catch (ActivityNotFoundException e) {
-                    Toast.makeText(getContext(), packageName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), data.getPackageName(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        item.setOnLongClickListener(new OnLongClickListener() {
-            @Override public boolean onLongClick(View view) {
-                view.startDrag(
+        view.setOnLongClickListener(new OnLongClickListener() {
+            @Override public boolean onLongClick(View v) {
+                v.startDrag(
                         ClipData.newPlainText(getContext().getString(R.string.move_action)+"."+getContext().getPackageName(), null),
-                        new View.DragShadowBuilder(),//new View.DragShadowBuilder(view),
-                        view, 0);
-                layoutState.remove(view.getTag(R.integer.tag_position_start));
+                        new View.DragShadowBuilder(),//new View.DragShadowBuilder(v),
+                        v, 0);
+                layoutState.remove(v.getTag(R.integer.tag_position_start));
                 return false;
             }
         });
-        return item;
+        return view;
+    }
+
+    private void resizeView(View view) {
+        ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+        Point start = getPoint((Integer) view.getTag(R.integer.tag_position_start));
+        Point end = getPoint((Integer) view.getTag(R.integer.tag_position_end));
+        layoutParams.width = (1 + end.x - start.x) * cellSize;
+        layoutParams.height = (1 + end.y - start.y) * cellSize;
+        Log.w("LP", layoutParams.width + " " + layoutParams.height);
+        view.setLayoutParams(layoutParams);
     }
 
     private void repositionView(View view, int x, int y, boolean animate) {
-        float x1 = x * cellSize + cellSize / 2 - view.getMeasuredWidth() / 2;
-        float y1 = y * cellSize + cellSize / 2 - view.getMeasuredHeight() / 2;
+        x *= cellSize;
+        y *= cellSize;
         if (animate) {
             view.animate()
                     .setDuration(getResources().getInteger(R.integer.dock_animation_duration_default))
-                    .translationX(x1)
-                    .translationY(y1)
+                    .translationX(x)
+                    .translationY(y)
                     .start();
         } else {
-            view.setX(x1);
-            view.setY(y1);
+            view.setX(x);
+            view.setY(y);
         }
     }
 
@@ -384,8 +411,15 @@ public class CellLayout extends RelativeLayout {
     private void writePreferences() {
         Set<String> s = new HashSet<>();
         for (Map.Entry<Integer, ItemData> e : layoutState.entrySet()) {
-            if (e.getValue() != null) {
-                s.add(String.valueOf(e.getKey())+"|"+e.getValue());
+            ItemData value = e.getValue();
+            if (value != null) {
+                StringBuilder sb = new StringBuilder(String.valueOf(e.getKey())).append("|");
+                if (value instanceof WidgetData) {
+                    sb.append("W|");
+                } else {
+                    sb.append("A|");
+                }
+                s.add(sb.append(value).toString());
             }
         }
         PreferenceManager.getDefaultSharedPreferences(getContext()).edit()
@@ -398,28 +432,37 @@ public class CellLayout extends RelativeLayout {
                 .getStringSet(getClass().getName(), Collections.<String>emptySet());
         for (String line : s) {
             String[] split = line.split("\\|");
-            ItemData data = split.length == 2
-                    ? new WidgetData(Integer.parseInt(split[1]))
-                    : new ApplicationData(split[1], split[2]);
+            int id;
+            ItemData data = "W".equals(split[1])
+                    ? new WidgetData(id = Integer.parseInt(split[2]), AppWidgetManager.getInstance(getContext()).getAppWidgetInfo(id))
+                    : new ApplicationData(split[2]);
             layoutState.put(Integer.parseInt(split[0]), data);
         }
         post(new Runnable() {
             @Override public void run() {
                 for (Map.Entry<Integer, ItemData> e : layoutState.entrySet()) {
                     final View item;
+                    final Point p = getPoint(e.getKey());
                     if (e.getValue() instanceof ApplicationData) {
                         item = getTargetView((ApplicationData) e.getValue());
+                        item.setTag(R.integer.tag_position_end, e.getKey());
                     } else if (e.getValue() instanceof WidgetData) {
-                        item = getTargetView((WidgetData) e.getValue());
+                        AppWidgetHostView view = getTargetView((WidgetData) e.getValue());
+                        int width = view.getAppWidgetInfo().minWidth / cellSize;
+                        if (view.getAppWidgetInfo().minWidth % cellSize == 0) width--;
+                        int height = view.getAppWidgetInfo().minHeight / cellSize;
+                        if (view.getAppWidgetInfo().minHeight % cellSize == 0) height--;
+                        view.setTag(R.integer.tag_position_end, getNumber(p.x+width, p.y+height));
+                        item = view;
                     } else {
                         continue;
                     }
-                    item.setVisibility(INVISIBLE);
                     item.setTag(R.integer.tag_position_start, e.getKey());
+                    item.setVisibility(INVISIBLE);
                     addView(item);
-                    final Point p = getPoint(e.getKey());
                     item.post(new Runnable() {
                         @Override public void run() {
+                            resizeView(item);
                             repositionView(item, p.x, p.y, false);
                             item.setVisibility(VISIBLE);
                         }

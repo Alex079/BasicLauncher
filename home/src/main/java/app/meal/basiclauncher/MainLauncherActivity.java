@@ -20,7 +20,7 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         super.onCreate(state);
         setContentView(R.layout.main_activity);
         getDrawerLayout().setScrimColor(getResources().getColor(R.color.drawerScrim));
-        final CellLayout cellLayout = getCellLayout();
+        CellLayout cellLayout = getCellLayout();
         /*ClockView clockView = getClockView();
 
         clockView.setFormat(PreferenceManager.getDefaultSharedPreferences(this).getString(
@@ -35,23 +35,23 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         cellLayout.setGridSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(
                 getString(R.string.dock_size_key), getResources().getInteger(R.integer.dock_size_default)
         ), false);
-        cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override public boolean onLongClick(View v) {
-                /*PopupMenu popupMenu = new PopupMenu(MainLauncherActivity.this, v);
+        /*cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override public boolean onLongClick(View view) {
+                *//*PopupMenu popupMenu = new PopupMenu(MainLauncherActivity.this, v);
                 popupMenu.inflate(R.menu.home_popup);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override public boolean onMenuItemClick(MenuItem item) {
                         return false;
                     }
                 });
-                popupMenu.show();*/
+                popupMenu.show();*//*
                 startActivityForResult(
                         new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK)
-                                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, cellLayout.allocateAppWidgetId()),
+                                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, ((CellLayout) view).allocateAppWidgetId()),
                         R.integer.app_widget_signal_pick);
                 return true;
             }
-        });
+        });*/
         if (state == null) {
             cellLayout.initializeState();
         }
@@ -107,25 +107,27 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         super.onDestroy();
     }
 
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-        if (level >= TRIM_MEMORY_UI_HIDDEN) {
+//    @Override
+//    public void onTrimMemory(int level) {
+//        super.onTrimMemory(level);
+//        if (level >= TRIM_MEMORY_UI_HIDDEN) {
 //            getClockView().setActive(false);
 //            orientationListener.disable();
-        }
-    }
+//        }
+//    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
 //        getClockView().setActive(true);
 //        orientationListener.enable();
-    }
+//    }
 
     @Override
     public void onBackPressed() {
-        closeDrawer(getDrawerLayout(), findViewById(R.id.applicationListDrawer));
+        DrawerLayout drawerLayout = getDrawerLayout();
+        closeDrawer(drawerLayout, findViewById(R.id.applicationListDrawer));
+        closeDrawer(drawerLayout, findViewById(R.id.widgetListDrawer));
     }
 
     private void closeDrawer(DrawerLayout layout, View drawer) {

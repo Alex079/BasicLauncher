@@ -3,7 +3,7 @@
     <dimen name="drawer_size">320dp</dimen>
     <dimen name="clock_text_size">60sp</dimen>
     <dimen name="item_icon_size">@android:dimen/app_icon_size</dimen>
-    <dimen name="item_text_width">96dp</dimen>
+    <dimen name="item_text_width">62dp</dimen>
     <dimen name="item_text_size">12sp</dimen>
     <dimen name="item_text_size_smallest">10sp</dimen>
     <dimen name="small_spacing">5dp</dimen>
@@ -33,6 +33,7 @@
     <!--<drawable name="app_is_gone">@android:drawable/sym_def_app_icon</drawable>-->
 
     <color name="dropZone">#3000FF00</color>
+    <color name="dragItem">#300000FF</color>
     <color name="drawerScrim">#D0000000</color>
     <!--<color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>

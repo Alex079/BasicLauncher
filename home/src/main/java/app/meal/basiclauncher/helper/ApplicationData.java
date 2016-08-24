@@ -1,48 +1,56 @@
 package app.meal.basiclauncher.helper;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 
 public class ApplicationData implements ItemData {
 
-    private final String packageName;
-    private final String name;
+    private final ComponentName componentName;
+
+    public ApplicationData(ComponentName componentName) {
+        this.componentName = componentName;
+    }
 
     public ApplicationData(String packageName, String name) {
-        this.packageName = packageName;
-        this.name = name;
+        this.componentName = new ComponentName(packageName, name);
+    }
+
+    public ApplicationData(String flatString) {
+        this.componentName = ComponentName.unflattenFromString(flatString);
     }
 
     @Override
     public String toString() {
-        return packageName+"|"+name;
+        return componentName.flattenToShortString();
     }
 
     public String getPackageName() {
-        return packageName;
+        return componentName.getPackageName();
     }
 
     public String getName() {
-        return name;
+        return componentName.getClassName();
     }
 
     public CharSequence getLabel(PackageManager packageManager) {
-        ResolveInfo info = packageManager.resolveActivity(new Intent().setClassName(packageName, name), 0);
-        return info == null
-                ? packageName
-                : info.activityInfo.loadLabel(packageManager);
+        try {
+            return packageManager.getActivityInfo(componentName, 0).loadLabel(packageManager);
+        } catch (PackageManager.NameNotFoundException e) {
+            return componentName.getPackageName();
+        }
     }
 
     public Drawable getIcon(PackageManager packageManager) {
-        ResolveInfo info = packageManager.resolveActivity(new Intent().setClassName(packageName, name), 0);
-        return info == null
-                ? packageManager.getDefaultActivityIcon()
-                : info.activityInfo.loadIcon(packageManager);
+        try {
+            return packageManager.getActivityInfo(componentName, 0).loadIcon(packageManager);
+        } catch (PackageManager.NameNotFoundException e) {
+            return packageManager.getDefaultActivityIcon();
+        }
     }
 
     public Intent getIntent() {
-        return new Intent().setClassName(packageName, name);
+        return new Intent().setComponent(componentName);
     }
 }

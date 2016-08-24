@@ -10,6 +10,7 @@
         android:maxWidth="@dimen/item_icon_size"
         android:maxHeight="@dimen/item_icon_size"
         android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
         android:contentDescription="@string/image_content_description"/>
 
     <TextView
