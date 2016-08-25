@@ -16,7 +16,6 @@
     <integer name="dock_size_min">1</integer>
     <integer name="dock_size_max">9</integer>
 
-    <integer name="application_list_columns">3</integer>
     <integer name="dock_animation_duration_default">200</integer>
 
     <!-- System -->

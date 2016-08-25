@@ -1,7 +1,6 @@
 <resources>
 
     <dimen name="drawer_size">320dp</dimen>
-    <dimen name="clock_text_size">60sp</dimen>
     <dimen name="item_icon_size">@android:dimen/app_icon_size</dimen>
     <dimen name="item_text_width">62dp</dimen>
     <dimen name="item_text_size">12sp</dimen>
@@ -20,8 +19,8 @@
     <string name="home_screen_is_full">Cannot place the link, home screen is full</string>
     <string name="image_content_description" translatable="false">img</string>
 
-    <integer name="tag_position_start">1</integer>
-    <integer name="tag_position_end">2</integer>
+    <integer name="tag_position">1</integer>
+    <integer name="tag_size">2</integer>
     <integer name="tag_app_data">3</integer>
     <integer name="small_shadow">5</integer>
     <integer name="large_shadow">10</integer>
