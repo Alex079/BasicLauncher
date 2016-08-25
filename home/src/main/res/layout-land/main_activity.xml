@@ -30,9 +30,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="@dimen/normal_spacing"
-            android:layout_marginLeft="@dimen/normal_spacing"
-            android:layout_marginRight="@dimen/normal_spacing"/>
+            android:layout_marginLeft="@dimen/half_normal_spacing"
+            android:layout_marginRight="@dimen/half_normal_spacing"/>
 
     </RelativeLayout>
 
@@ -45,5 +44,15 @@
         android:layout_marginTop="@dimen/normal_spacing"
         android:layout_marginBottom="@dimen/normal_spacing"
         android:layout_gravity="end"/>
+
+    <!--<fragment
+        android:id="@+id/widgetListDrawer"
+        android:name="app.meal.basiclauncher.fragment.WidgetListFragment"
+        tools:layout="@layout/fragment_widget_list"
+        android:layout_width="@dimen/drawer_size"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/normal_spacing"
+        android:layout_marginBottom="@dimen/normal_spacing"
+        android:layout_gravity="start"/>-->
 
 </android.support.v4.widget.DrawerLayout>

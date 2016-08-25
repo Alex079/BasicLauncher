@@ -19,9 +19,9 @@
     <!-- System -->
     <string name="pref_header_system">Системные</string>
     <!-- System -->
-    <string name="wallpaper_title">Обои</string>
-    <string name="wallpaper_summary">Установить системные обои</string>
-    <string name="system_clock_title">Часы</string>
-    <string name="system_clock_summary">Установить системные часы</string>
+    <string name="system_all_title">Все настройки</string>
+    <string name="system_all_summary">Перейти к системным настройкам</string>
+    <string name="system_wallpaper_title">Обои</string>
+    <string name="system_wallpaper_summary">Установить системные обои</string>
 
 </resources>

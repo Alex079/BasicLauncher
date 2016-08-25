@@ -2,15 +2,12 @@ package app.meal.basiclauncher.fragment;
 
 import android.app.Fragment;
 import android.app.LoaderManager;
-import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
-import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.util.List;
@@ -18,7 +15,6 @@ import java.util.List;
 import app.meal.basiclauncher.R;
 import app.meal.basiclauncher.helper.WidgetListAdapter;
 import app.meal.basiclauncher.helper.WidgetListLoader;
-import app.meal.basiclauncher.view.CellLayout;
 
 public class WidgetListFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<AppWidgetProviderInfo>> {
 
@@ -35,18 +31,13 @@ public class WidgetListFragment extends Fragment implements LoaderManager.Loader
         viewAdapter = new WidgetListAdapter(getActivity(), R.layout.item_widget_list, R.id.widgetListItemLabel, R.id.widgetListItemIcon, R.id.widgetListItemPicture);
         ListView listView = (ListView) rootView.findViewById(R.id.widgetList);
         listView.setAdapter(viewAdapter);
-
-        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        /*listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                startActivityForResult(
-                        new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK)
-                                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, ((CellLayout) view).allocateAppWidgetId()),
-                        R.integer.app_widget_signal_pick);
-                getActivity().onBackPressed();
+                LocalEventsManager.getInstance().send(new Event(Event.Type.NEW_WIDGET, viewAdapter.getItem(i)));
+                // TODO - add drag support: not sure what to do with configuration activity if start dragging immediately
                 return true;
             }
-        });
-
+        });*/
         getLoaderManager().initLoader(0, savedInstanceState, this);
     }
 

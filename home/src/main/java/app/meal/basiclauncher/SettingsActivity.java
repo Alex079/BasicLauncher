@@ -12,11 +12,8 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NavUtils;
-import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.view.MenuItem;
 
-import java.util.Calendar;
 import java.util.List;
 
 import app.meal.basiclauncher.event.Event;
@@ -51,7 +48,7 @@ public class SettingsActivity extends PreferenceActivity {
             }
             return true;
         }
-    };*/
+    };
 
     private static final Preference.OnPreferenceChangeListener clockFormatListener = new Preference.OnPreferenceChangeListener() {
         private final Calendar calendar = Calendar.getInstance();
@@ -72,7 +69,7 @@ public class SettingsActivity extends PreferenceActivity {
             LocalEventsManager.getInstance().send(new Event(Event.Type.CLOCK_FONT_SIZE, value));
             return true;
         }
-    };
+    };*/
 
     private static final Preference.OnPreferenceChangeListener followRotationListener = new Preference.OnPreferenceChangeListener() {
         @Override public boolean onPreferenceChange(Preference preference, Object value) {
@@ -166,7 +163,7 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference preference;
 
-            preference = findPreference(getString(R.string.clock_format_key));
+            /*preference = findPreference(getString(R.string.clock_format_key));
             preference.setOnPreferenceChangeListener(clockFormatListener);
             clockFormatListener.onPreferenceChange(preference,
                     PreferenceManager
@@ -178,7 +175,7 @@ public class SettingsActivity extends PreferenceActivity {
             clockFontSizeListener.onPreferenceChange(preference,
                     PreferenceManager
                             .getDefaultSharedPreferences(preference.getContext())
-                            .getInt(preference.getKey(), preference.getContext().getResources().getInteger(R.integer.clock_font_size_default)));
+                            .getInt(preference.getKey(), preference.getContext().getResources().getInteger(R.integer.clock_font_size_default)));*/
 
             preference = findPreference(getString(R.string.icons_follow_key));
             preference.setOnPreferenceChangeListener(followRotationListener);

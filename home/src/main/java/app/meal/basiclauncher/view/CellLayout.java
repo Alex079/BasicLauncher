@@ -16,7 +16,6 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Surface;
@@ -102,6 +101,10 @@ public class CellLayout extends RelativeLayout {
         return appWidgetHost.allocateAppWidgetId();
     }
 
+    public void deleteAppWidgetId(int id) {
+        appWidgetHost.deleteAppWidgetId(id);
+    }
+
     public void placeWidget(int id) {
         WidgetData data = new WidgetData(id, AppWidgetManager.getInstance(getContext()).getAppWidgetInfo(id));
         int position = choosePosition();
@@ -141,7 +144,6 @@ public class CellLayout extends RelativeLayout {
                             MeasureSpec.getMode(heightMeasureSpec)));
         }
         cellSize = Math.min(getMeasuredWidth(), getMeasuredHeight()) / gridSize;
-        Log.w("Cell Size", String.valueOf(cellSize));
         gridWidth = getMeasuredWidth() / cellSize;
         gridHeight = getMeasuredHeight() / cellSize;
     }
@@ -166,6 +168,8 @@ public class CellLayout extends RelativeLayout {
                 if (description.contains(getContext().getString(R.string.copy_action))) {
                     viewBeingDragged = getTargetView((ApplicationData) sourceView.getTag(R.integer.tag_app_data));
                     previousPosition = choosePosition();
+                    viewBeingDragged.setTag(R.integer.tag_position_start, previousPosition);
+                    viewBeingDragged.setTag(R.integer.tag_position_end, previousPosition);
                     currentPosition = -1;
                 } else {
                     viewBeingDragged = sourceView;
@@ -178,7 +182,7 @@ public class CellLayout extends RelativeLayout {
             case DragEvent.ACTION_DRAG_ENTERED:
                 if (viewBeingDragged.getParent() == null) {
                     addView(viewBeingDragged);
-                    viewBeingDragged.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
+                    resizeView(viewBeingDragged);
                 }
                 break;
             case DragEvent.ACTION_DRAG_LOCATION:
@@ -212,20 +216,25 @@ public class CellLayout extends RelativeLayout {
                 if (layoutState.containsKey(currentPosition)) {
                     View v = getViewByNumber(currentPosition);
                     v.setTag(R.integer.tag_position_start, previousPosition);
+                    v.setTag(R.integer.tag_position_end,
+                            (Integer) v.getTag(R.integer.tag_position_end) + previousPosition - currentPosition);
                     layoutState.put(previousPosition, layoutState.remove(currentPosition));
                 }
                 viewBeingDragged.setTag(R.integer.tag_position_start, currentPosition);
-                layoutState.put(currentPosition,
-                        (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data));
+                viewBeingDragged.setTag(R.integer.tag_position_end,
+                        (Integer) viewBeingDragged.getTag(R.integer.tag_position_end) + currentPosition - previousPosition);
+                layoutState.put(currentPosition, (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data));
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
                 setBackgroundColor(Color.TRANSPARENT);
-                viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
-                ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
-                if (currentPosition < 0 && data instanceof WidgetData) {
-                    appWidgetHost.deleteAppWidgetId(((WidgetData) data).getId());
+                if (viewBeingDragged != null) {
+                    viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
+                    ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
+                    if (currentPosition < 0 && data instanceof WidgetData) {
+                        deleteAppWidgetId(((WidgetData) data).getId());
+                    }
+                    viewBeingDragged = null;
                 }
-                viewBeingDragged = null;
                 break;
             default:
                 return super.onDragEvent(event);
@@ -260,6 +269,7 @@ public class CellLayout extends RelativeLayout {
                     return (gridWidth - 1 - x) + gridWidth * (gridHeight - 1 - y);
                 case Surface.ROTATION_270:
                     return gridHeight * (gridWidth - 1 - x) + y;
+                case Surface.ROTATION_0:
                 default:
             }
         }
@@ -275,6 +285,7 @@ public class CellLayout extends RelativeLayout {
                     return new Point(gridWidth - 1 - number % gridWidth, gridHeight - 1 - number / gridWidth);
                 case Surface.ROTATION_270:
                     return new Point(gridWidth - 1 - number / gridHeight, number % gridHeight);
+                case Surface.ROTATION_0:
                 default:
             }
         }
@@ -299,6 +310,8 @@ public class CellLayout extends RelativeLayout {
                     return;
                 }
                 v.setTag(R.integer.tag_position_start, newPosition);
+                v.setTag(R.integer.tag_position_end,
+                        (Integer) v.getTag(R.integer.tag_position_end) + newPosition - position);
                 layoutState.put(newPosition, layoutState.remove(position));
                 position = newPosition;
             }
@@ -322,7 +335,7 @@ public class CellLayout extends RelativeLayout {
                 return false;
             }
         });
-        if (followRotation) {
+        /*if (followRotation) {
             switch (((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation()) {
                 case Surface.ROTATION_90:
                     view.setRotation(270);
@@ -331,7 +344,7 @@ public class CellLayout extends RelativeLayout {
                     view.setRotation(90);
                     break;
             }
-        }
+        }*/
         return view;
     }
 
@@ -373,7 +386,6 @@ public class CellLayout extends RelativeLayout {
         Point end = getPoint((Integer) view.getTag(R.integer.tag_position_end));
         layoutParams.width = (1 + end.x - start.x) * cellSize;
         layoutParams.height = (1 + end.y - start.y) * cellSize;
-        Log.w("LP", layoutParams.width + " " + layoutParams.height);
         view.setLayoutParams(layoutParams);
     }
 

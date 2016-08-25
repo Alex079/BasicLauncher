@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import app.meal.basiclauncher.MainLauncherActivity;
 import app.meal.basiclauncher.R;
 import app.meal.basiclauncher.SettingsActivity;
 import app.meal.basiclauncher.helper.ApplicationData;
@@ -61,7 +62,7 @@ public class ApplicationListFragment extends Fragment implements LoaderCallbacks
                         ClipData.newPlainText(getString(R.string.copy_action)+"."+getActivity().getPackageName(), null),
                         new View.DragShadowBuilder(),//new View.DragShadowBuilder(view),
                         view, 0);
-                getActivity().onBackPressed();
+                ((MainLauncherActivity) getActivity()).closeDrawer();
                 return true;
             }
         });

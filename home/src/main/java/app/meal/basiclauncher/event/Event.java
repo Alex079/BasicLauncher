@@ -15,6 +15,6 @@ public class Event {
     public Object getData() { return data; }
 
     public enum Type {
-        CLOCK_FORMAT, CLOCK_FONT_SIZE, DOCK_SIZE, FOLLOW_ROTATION
+        DOCK_SIZE, FOLLOW_ROTATION
     }
 }

@@ -35,9 +35,9 @@
     <!-- System -->
     <string name="pref_header_system">System</string>
     <!-- System -->
-    <string name="wallpaper_title">Wallpaper</string>
-    <string name="wallpaper_summary">Set system wallpaper</string>
-    <string name="system_clock_title">Clock</string>
-    <string name="system_clock_summary">Set system clock</string>
+    <string name="system_all_title">All Settings</string>
+    <string name="system_all_summary">Go to system settings</string>
+    <string name="system_wallpaper_title">Wallpaper</string>
+    <string name="system_wallpaper_summary">Set system wallpaper</string>
 
 </resources>

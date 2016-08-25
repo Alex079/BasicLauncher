@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
+import android.view.KeyEvent;
 import android.view.View;
 
 import app.meal.basiclauncher.event.Event;
@@ -35,23 +36,23 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         cellLayout.setGridSize(PreferenceManager.getDefaultSharedPreferences(this).getInt(
                 getString(R.string.dock_size_key), getResources().getInteger(R.integer.dock_size_default)
         ), false);
-        /*cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
+        cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override public boolean onLongClick(View view) {
-                *//*PopupMenu popupMenu = new PopupMenu(MainLauncherActivity.this, v);
+                /*PopupMenu popupMenu = new PopupMenu(MainLauncherActivity.this, v);
                 popupMenu.inflate(R.menu.home_popup);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override public boolean onMenuItemClick(MenuItem item) {
                         return false;
                     }
                 });
-                popupMenu.show();*//*
+                popupMenu.show();*/
                 startActivityForResult(
                         new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK)
                                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, ((CellLayout) view).allocateAppWidgetId()),
                         R.integer.app_widget_signal_pick);
                 return true;
             }
-        });*/
+        });
         if (state == null) {
             cellLayout.initializeState();
         }
@@ -124,10 +125,22 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
 //    }
 
     @Override
-    public void onBackPressed() {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                closeDrawer();
+                return true;
+            case KeyEvent.KEYCODE_MENU:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+        }
+        return super.onKeyUp(keyCode, event);
+    }
+
+    public void closeDrawer() {
         DrawerLayout drawerLayout = getDrawerLayout();
         closeDrawer(drawerLayout, findViewById(R.id.applicationListDrawer));
-        closeDrawer(drawerLayout, findViewById(R.id.widgetListDrawer));
+        //closeDrawer(drawerLayout, findViewById(R.id.widgetListDrawer));
     }
 
     private void closeDrawer(DrawerLayout layout, View drawer) {
@@ -140,12 +153,6 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
     public void onEvent(Event event) {
         switch (event.getCategory())
         {
-            /*case CLOCK_FORMAT:
-                getClockView().setFormat((CharSequence) event.getData());
-                break;
-            case CLOCK_FONT_SIZE:
-                getClockView().setTextSize(TypedValue.COMPLEX_UNIT_SP, (Integer) event.getData());
-                break;*/
             case FOLLOW_ROTATION:
                 getCellLayout().setFollowRotation((Boolean) event.getData(), true);
                 break;
@@ -154,10 +161,6 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
                 break;
         }
     }
-
-    /*private ClockView getClockView() {
-        return (ClockView) findViewById(R.id.mainClock);
-    }*/
 
     private CellLayout getCellLayout() {
         return (CellLayout) findViewById(R.id.applicationDock);
