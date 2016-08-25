@@ -17,7 +17,6 @@
     <string name="package_scheme_name" translatable="false">package</string>
     <string name="copy_action" translatable="false">copy</string>
     <string name="move_action" translatable="false">move</string>
-    <!--<string name="app_is_gone">*removed*</string>-->
     <string name="home_screen_is_full">Cannot place the link, home screen is full</string>
     <string name="image_content_description" translatable="false">img</string>
 
@@ -31,7 +30,6 @@
     <integer name="app_widget_signal_create">32</integer>
 
     <drawable name="app_default">@android:drawable/ic_dialog_dialer</drawable>
-    <!--<drawable name="app_is_gone">@android:drawable/sym_def_app_icon</drawable>-->
 
     <color name="dropZone">#3000FF00</color>
     <color name="dragItem">#300000FF</color>

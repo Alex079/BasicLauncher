@@ -4,11 +4,6 @@
     <!-- Appearance -->
     <string name="pref_header_appearance">Внешний вид</string>
     <!-- Appearance -->
-    <string name="clock_format_title">Формат часов</string>
-
-    <string name="clock_font_size_title">Размер шрифта часов</string>
-    <string name="clock_font_size_summary">Размер шрифта (20–70)</string>
-
     <string name="icons_follow_title">Следовать за поворотом</string>
     <string name="icons_follow_summary">Значки на домашнем экране будут размещаться согласно положению устройства</string>
     <string name="icons_follow_summary_off">Значки на домашнем экране будут размещаться, начиная с верхнего левого угла, в любом положении устройства</string>
