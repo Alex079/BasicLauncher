@@ -23,7 +23,6 @@
     <integer name="tag_size">2</integer>
     <integer name="tag_app_data">3</integer>
     <integer name="small_shadow">5</integer>
-    <integer name="large_shadow">10</integer>
     <integer name="app_widget_host_id">95</integer>
     <integer name="app_widget_signal_pick">31</integer>
     <integer name="app_widget_signal_create">32</integer>

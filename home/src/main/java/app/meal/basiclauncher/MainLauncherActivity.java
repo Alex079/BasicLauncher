@@ -22,14 +22,6 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         setContentView(R.layout.main_activity);
         getDrawerLayout().setScrimColor(getResources().getColor(R.color.drawerScrim));
         CellLayout cellLayout = getCellLayout();
-        /*ClockView clockView = getClockView();
-
-        clockView.setFormat(PreferenceManager.getDefaultSharedPreferences(this).getString(
-                getString(R.string.clock_format_key), getString(R.string.clock_format_default)
-        ));
-        clockView.setTextSize(TypedValue.COMPLEX_UNIT_SP, PreferenceManager.getDefaultSharedPreferences(this).getInt(
-                getString(R.string.clock_font_size_key), getResources().getInteger(R.integer.clock_font_size_default)
-        ));*/
         cellLayout.setFollowRotation(PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
                 getString(R.string.icons_follow_key), getResources().getBoolean(R.bool.icons_follow_default)
         ), false);
@@ -38,14 +30,6 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         ), false);
         cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override public boolean onLongClick(View view) {
-                /*PopupMenu popupMenu = new PopupMenu(MainLauncherActivity.this, v);
-                popupMenu.inflate(R.menu.home_popup);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override public boolean onMenuItemClick(MenuItem item) {
-                        return false;
-                    }
-                });
-                popupMenu.show();*/
                 startActivityForResult(
                         new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK)
                                 .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, ((CellLayout) view).allocateAppWidgetId()),
@@ -132,6 +116,9 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
                 return true;
             case KeyEvent.KEYCODE_MENU:
                 startActivity(new Intent(this, SettingsActivity.class));
+                /*PopupMenu menu = new PopupMenu(this, getCellLayout());
+                menu.inflate(R.menu.main_popup_menu);
+                menu.show();*/
                 return true;
         }
         return super.onKeyUp(keyCode, event);

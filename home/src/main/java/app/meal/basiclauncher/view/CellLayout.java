@@ -35,6 +35,7 @@ import java.util.Set;
 
 import app.meal.basiclauncher.R;
 import app.meal.basiclauncher.helper.ApplicationData;
+import app.meal.basiclauncher.helper.BasicAppWidgetHost;
 import app.meal.basiclauncher.helper.ItemData;
 import app.meal.basiclauncher.helper.WidgetData;
 
@@ -62,7 +63,8 @@ public class CellLayout extends RelativeLayout {
     private int gridWidth = 0;
     private int gridHeight = 0;
     private boolean followRotation = getResources().getBoolean(R.bool.icons_follow_default);
-    private final AppWidgetHost appWidgetHost = isInEditMode() ? null : new AppWidgetHost(getContext(), R.integer.app_widget_host_id);
+    private final AppWidgetHost appWidgetHost = isInEditMode() ? null
+            : new BasicAppWidgetHost(getContext(), R.integer.app_widget_host_id);
 
     private View viewBeingDragged;
     private Point previousPoint;
@@ -115,8 +117,6 @@ public class CellLayout extends RelativeLayout {
         final Point p = getPoint(position);
         view.setVisibility(INVISIBLE);
         addView(view);
-//        int width = view.getAppWidgetInfo().minWidth / cellSize;
-//        int height = view.getAppWidgetInfo().minHeight / cellSize;
         view.post(new Runnable() {
             @Override public void run() {
                 resizeView(view);
@@ -330,7 +330,9 @@ public class CellLayout extends RelativeLayout {
                 return false;
             }
         });
-        /*if (followRotation) {
+        if (followRotation) {
+            view.setPivotX(cellSize/2f);
+            view.setPivotY(cellSize/2f);
             switch (((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation()) {
                 case Surface.ROTATION_90:
                     view.setRotation(270);
@@ -338,8 +340,10 @@ public class CellLayout extends RelativeLayout {
                 case Surface.ROTATION_270:
                     view.setRotation(90);
                     break;
+                case Surface.ROTATION_0:
+                case Surface.ROTATION_180:
             }
-        }*/
+        }
         return view;
     }
 
@@ -385,23 +389,6 @@ public class CellLayout extends RelativeLayout {
     }
 
     private void repositionView(View view, int x, int y, boolean animate) {
-        if (followRotation) {
-            Point size = (Point) view.getTag(R.integer.tag_size);
-            switch (((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation()) {
-                case Surface.ROTATION_0:
-                    break;
-                case Surface.ROTATION_90:
-                    y -= size.y-1;
-                    break;
-                case Surface.ROTATION_180:
-                    x -= size.x-1;
-                    y -= size.y-1;
-                    break;
-                case Surface.ROTATION_270:
-                    x -= size.x-1;
-                    break;
-            }
-        }
         x *= cellSize;
         y *= cellSize;
         if (animate) {
