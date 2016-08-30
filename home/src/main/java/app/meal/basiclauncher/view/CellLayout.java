@@ -330,7 +330,7 @@ public class CellLayout extends RelativeLayout {
                 return false;
             }
         });
-        if (followRotation) {
+        if (followRotation && width != height) {
             view.setPivotX(cellSize/2f);
             view.setPivotY(cellSize/2f);
             switch (((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation()) {
@@ -389,6 +389,23 @@ public class CellLayout extends RelativeLayout {
     }
 
     private void repositionView(View view, int x, int y, boolean animate) {
+        if (followRotation && (int) view.getRotation() == 0) {
+            Point size = (Point) view.getTag(R.integer.tag_size);
+            switch (((Activity) getContext()).getWindowManager().getDefaultDisplay().getRotation()) {
+                case Surface.ROTATION_0:
+                    break;
+                case Surface.ROTATION_90:
+                    y -= size.y-1;
+                    break;
+                case Surface.ROTATION_180:
+                    x -= size.x-1;
+                    y -= size.y-1;
+                    break;
+                case Surface.ROTATION_270:
+                    x -= size.x-1;
+                    break;
+            }
+        }
         x *= cellSize;
         y *= cellSize;
         if (animate) {
