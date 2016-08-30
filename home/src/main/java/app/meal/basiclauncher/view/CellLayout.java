@@ -8,6 +8,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -148,89 +149,115 @@ public class CellLayout extends RelativeLayout {
     public boolean onDragEvent(DragEvent event) {
         switch (event.getAction()) {
             case DragEvent.ACTION_DRAG_STARTED:
-                if (event.getClipDescription() == null || event.getClipDescription().getLabel() == null) {
-                    return super.onDragEvent(event);
-                }
-                String description = event.getClipDescription().getLabel().toString();
-                if (!description.contains(getContext().getPackageName())) {
+                ClipDescription clipDescription;
+                CharSequence label;
+                String description;
+                if ((clipDescription = event.getClipDescription()) == null ||
+                    (label = clipDescription.getLabel()) == null ||
+                    (!(description = label.toString()).contains(getContext().getPackageName())) )
+                {
                     return super.onDragEvent(event);
                 }
                 if (layoutState.size() > getGridLimit()) {
                     Toast.makeText(getContext(), R.string.home_screen_is_full, Toast.LENGTH_LONG).show();
                     return super.onDragEvent(event);
                 }
-                setBackgroundColor(getResources().getColor(R.color.dropZone));
-                View sourceView = (View) event.getLocalState();
-                if (description.contains(getContext().getString(R.string.copy_action))) {
-                    viewBeingDragged = getTargetView((ApplicationData) sourceView.getTag(R.integer.tag_app_data));
-                    previousPosition = choosePosition();
-                    viewBeingDragged.setTag(R.integer.tag_position, previousPosition);
-                    currentPosition = -1;
-                } else {
-                    viewBeingDragged = sourceView;
-                    previousPosition = (Integer) viewBeingDragged.getTag(R.integer.tag_position);
-                    currentPosition = previousPosition;
-                }
-                viewBeingDragged.setBackgroundColor(getResources().getColor(R.color.dragItem));
-                previousPoint = getPoint(previousPosition);
+                onDragStarted(event, description.contains(getContext().getString(R.string.copy_action)));
                 break;
             case DragEvent.ACTION_DRAG_ENTERED:
-                if (viewBeingDragged.getParent() == null) {
-                    addView(viewBeingDragged);
-                    resizeView(viewBeingDragged);
-                }
+                onDragEntered();
                 break;
             case DragEvent.ACTION_DRAG_LOCATION:
-                int x = (int) event.getX() / cellSize;
-                int y = (int) event.getY() / cellSize;
-                int newPosition = getNumber(x, y);
-                if (currentPosition != newPosition) {
-                    repositionView(viewBeingDragged, x, y, currentPosition >=0);
-                    if (layoutState.containsKey(newPosition)) {
-                        View v = getViewByNumber(newPosition);
-                        repositionView(v, previousPoint.x, previousPoint.y, true);
-                    }
-                    if (layoutState.containsKey(currentPosition)) {
-                        View v = getViewByNumber(currentPosition);
-                        Point p = getPoint(currentPosition);
-                        repositionView(v, p.x, p.y, true);
-                    }
-                    currentPosition = newPosition;
-                }
+                onDragMoved(event);
                 break;
             case DragEvent.ACTION_DRAG_EXITED:
-                if (layoutState.containsKey(currentPosition)) {
-                    View v = getViewByNumber(currentPosition);
-                    Point p = getPoint(currentPosition);
-                    repositionView(v, p.x, p.y, true);
-                }
-                removeView(viewBeingDragged);
-                currentPosition = -1;
+                onDragExited();
                 break;
             case DragEvent.ACTION_DROP:
-                if (layoutState.containsKey(currentPosition)) {
-                    View v = getViewByNumber(currentPosition);
-                    v.setTag(R.integer.tag_position, previousPosition);
-                    layoutState.put(previousPosition, layoutState.remove(currentPosition));
-                }
-                viewBeingDragged.setTag(R.integer.tag_position, currentPosition);
-                layoutState.put(currentPosition, (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data));
+                onDragDropped();
                 break;
             case DragEvent.ACTION_DRAG_ENDED:
-                setBackgroundColor(Color.TRANSPARENT);
-                if (viewBeingDragged != null) {
-                    viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
-                    ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
-                    if (currentPosition < 0 && data instanceof WidgetData) {
-                        deleteAppWidgetId(((WidgetData) data).getId());
-                    }
-                    viewBeingDragged = null;
-                }
+                onDragEnded();
                 break;
             default:
                 return super.onDragEvent(event);
         }
         return true;
+    }
+
+    private void onDragStarted(DragEvent event, boolean isCopy) {
+        setBackgroundColor(getResources().getColor(R.color.dropZone));
+        View sourceView = (View) event.getLocalState();
+        if (isCopy) {
+            viewBeingDragged = getTargetView((ApplicationData) sourceView.getTag(R.integer.tag_app_data));
+            previousPosition = choosePosition();
+            viewBeingDragged.setTag(R.integer.tag_position, previousPosition);
+            currentPosition = -1;
+        } else {
+            viewBeingDragged = sourceView;
+            previousPosition = (Integer) viewBeingDragged.getTag(R.integer.tag_position);
+            currentPosition = previousPosition;
+        }
+        viewBeingDragged.setBackgroundColor(getResources().getColor(R.color.dragItem));
+        previousPoint = getPoint(previousPosition);
+    }
+
+    private void onDragEntered() {
+        if (viewBeingDragged.getParent() == null) {
+            addView(viewBeingDragged);
+            resizeView(viewBeingDragged);
+        }
+    }
+
+    private void onDragMoved(DragEvent event) {
+        int x = (int) event.getX() / cellSize;
+        int y = (int) event.getY() / cellSize;
+        int newPosition = getNumber(x, y);
+        if (currentPosition != newPosition) {
+            repositionView(viewBeingDragged, x, y, currentPosition >=0);
+            if (layoutState.containsKey(newPosition)) {
+                View v = getViewByNumber(newPosition);
+                repositionView(v, previousPoint.x, previousPoint.y, true);
+            }
+            if (layoutState.containsKey(currentPosition)) {
+                View v = getViewByNumber(currentPosition);
+                Point p = getPoint(currentPosition);
+                repositionView(v, p.x, p.y, true);
+            }
+            currentPosition = newPosition;
+        }
+    }
+
+    private void onDragExited() {
+        if (layoutState.containsKey(currentPosition)) {
+            View v = getViewByNumber(currentPosition);
+            Point p = getPoint(currentPosition);
+            repositionView(v, p.x, p.y, true);
+        }
+        removeView(viewBeingDragged);
+        currentPosition = -1;
+    }
+
+    private void onDragDropped() {
+        if (layoutState.containsKey(currentPosition)) {
+            View v = getViewByNumber(currentPosition);
+            v.setTag(R.integer.tag_position, previousPosition);
+            layoutState.put(previousPosition, layoutState.remove(currentPosition));
+        }
+        viewBeingDragged.setTag(R.integer.tag_position, currentPosition);
+        layoutState.put(currentPosition, (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data));
+    }
+
+    private void onDragEnded() {
+        setBackgroundColor(Color.TRANSPARENT);
+        if (viewBeingDragged != null) {
+            viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
+            ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
+            if (currentPosition < 0 && data instanceof WidgetData) {
+                deleteAppWidgetId(((WidgetData) data).getId());
+            }
+            viewBeingDragged = null;
+        }
     }
 
     private int choosePosition() {
@@ -297,6 +324,10 @@ public class CellLayout extends RelativeLayout {
                 int newPosition = choosePosition();
                 if (newPosition < 0) {
                     layoutState.remove(position);
+                    Object data = v.getTag(R.integer.tag_app_data);
+                    if (data instanceof WidgetData) {
+                        deleteAppWidgetId(((WidgetData) data).getId());
+                    }
                     removeView(v);
                     return;
                 }
