@@ -11,7 +11,7 @@
     <bool name="icons_follow_default">true</bool>
     <string name="dock_size_key" translatable="false">dock_size</string>
     <string name="dock_size_title">Dock size</string>
-    <string name="dock_size_summary">Size of the square dock in the home screen (1–9)</string>
+    <string name="dock_size_summary">Width of the dock in the home screen (1–9)</string>
     <integer name="dock_size_default">5</integer>
     <integer name="dock_size_min">1</integer>
     <integer name="dock_size_max">9</integer>

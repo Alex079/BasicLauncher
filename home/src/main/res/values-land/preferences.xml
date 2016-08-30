@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dock_size_summary">Height of the dock in the home screen (1–9)</string>
+</resources>

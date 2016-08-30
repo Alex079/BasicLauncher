@@ -9,7 +9,7 @@
     <string name="icons_follow_summary_off">Значки на домашнем экране будут размещаться, начиная с верхнего левого угла, в любом положении устройства</string>
 
     <string name="dock_size_title">Размер панели</string>
-    <string name="dock_size_summary">Размер квадратной панели на домашнем экране (1–9)</string>
+    <string name="dock_size_summary">Ширина панели на домашнем экране (1–9)</string>
 
     <!-- System -->
     <string name="pref_header_system">Системные</string>
