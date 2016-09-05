@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -68,6 +69,7 @@ public class CellLayout extends RelativeLayout {
             : new BasicAppWidgetHost(getContext(), R.integer.app_widget_host_id);
 
     private View viewBeingDragged;
+    private Drawable originalBackground;
     private Point previousPoint;
     private int previousPosition;
     private int currentPosition;
@@ -198,6 +200,7 @@ public class CellLayout extends RelativeLayout {
             previousPosition = (Integer) viewBeingDragged.getTag(R.integer.tag_position);
             currentPosition = previousPosition;
         }
+        originalBackground = viewBeingDragged.getBackground();
         viewBeingDragged.setBackgroundColor(getResources().getColor(R.color.dragItem));
         previousPoint = getPoint(previousPosition);
     }
@@ -251,7 +254,7 @@ public class CellLayout extends RelativeLayout {
     private void onDragEnded() {
         setBackgroundColor(Color.TRANSPARENT);
         if (viewBeingDragged != null) {
-            viewBeingDragged.setBackgroundColor(Color.TRANSPARENT);
+            viewBeingDragged.setBackgroundDrawable(originalBackground);
             ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
             if (currentPosition < 0 && data instanceof WidgetData) {
                 deleteAppWidgetId(((WidgetData) data).getId());
