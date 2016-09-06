@@ -378,6 +378,7 @@ public class CellLayout extends RelativeLayout {
                 case Surface.ROTATION_180:
             }
         }
+        //TODO obtain update info, perform update through local event
         return view;
     }
 

@@ -30,9 +30,10 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         ), false);
         cellLayout.setOnLongClickListener(new View.OnLongClickListener() {
             @Override public boolean onLongClick(View view) {
+                widgetBeingAdded = ((CellLayout) view).allocateAppWidgetId();
                 startActivityForResult(
                         new Intent(AppWidgetManager.ACTION_APPWIDGET_PICK)
-                                .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, ((CellLayout) view).allocateAppWidgetId()),
+                        .putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetBeingAdded),
                         R.integer.app_widget_signal_pick);
                 return true;
             }
@@ -62,6 +63,8 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
 
 //    private OrientationEventListener orientationListener;
 
+    private int widgetBeingAdded = -1;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -82,6 +85,9 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
                     break;
                 default:
             }
+        } else if (widgetBeingAdded >= 0) {
+            getCellLayout().deleteAppWidgetId(widgetBeingAdded);
+            widgetBeingAdded = -1;
         }
     }
 
