@@ -60,7 +60,7 @@ public class ApplicationListFragment extends Fragment implements LoaderCallbacks
             @Override public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
                 view.startDrag(
                         ClipData.newPlainText(getString(R.string.copy_action)+"."+getActivity().getPackageName(), null),
-                        new View.DragShadowBuilder(),//new View.DragShadowBuilder(view),
+                        new View.DragShadowBuilder(/*view*/),
                         view, 0);
                 ((MainLauncherActivity) getActivity()).closeDrawer();
                 return true;

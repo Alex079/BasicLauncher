@@ -2,7 +2,7 @@ package app.meal.basiclauncher.helper;
 
 import android.appwidget.AppWidgetProviderInfo;
 
-public class WidgetData implements ItemData {
+public class WidgetData extends ItemData {
 
     private final int id;
 
@@ -23,6 +23,11 @@ public class WidgetData implements ItemData {
 
     @Override
     public String toString() {
-        return String.valueOf(id);
+        return getMarker() + "|" + String.valueOf(id);
+    }
+
+    @Override
+    protected Type getMarker() {
+        return Type.WIDGET;
     }
 }

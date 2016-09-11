@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
-public class ApplicationData implements ItemData {
+public class ApplicationData extends ItemData {
 
     private final ComponentName componentName;
 
@@ -23,7 +23,7 @@ public class ApplicationData implements ItemData {
 
     @Override
     public String toString() {
-        return componentName.flattenToShortString();
+        return getMarker() + "|" + componentName.flattenToShortString();
     }
 
     public String getPackageName() {
@@ -52,5 +52,10 @@ public class ApplicationData implements ItemData {
 
     public Intent getIntent() {
         return new Intent().setComponent(componentName);
+    }
+
+    @Override
+    protected Type getMarker() {
+        return Type.APP;
     }
 }
