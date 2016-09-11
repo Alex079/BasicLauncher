@@ -4,7 +4,7 @@ import android.appwidget.AppWidgetProviderInfo;
 
 public class WidgetData extends ItemData {
 
-    private final int id;
+    private final int id; // TODO add size
 
     private final AppWidgetProviderInfo info;
 

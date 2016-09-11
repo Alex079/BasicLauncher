@@ -40,6 +40,7 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
         });
         if (state == null) {
             cellLayout.initializeState();
+            cellLayout.startListeningWidgetEvents();
         }
 
         LocalEventsManager.getInstance().register(this);
@@ -93,26 +94,27 @@ public class MainLauncherActivity extends Activity implements LocalEventsManager
 
     @Override
     protected void onDestroy() {
-//        orientationListener.disable();
+        getCellLayout().stopListeningWidgetEvents();
+        //orientationListener.disable();
         LocalEventsManager.getInstance().unregister(this);
         super.onDestroy();
     }
 
-//    @Override
-//    public void onTrimMemory(int level) {
-//        super.onTrimMemory(level);
-//        if (level >= TRIM_MEMORY_UI_HIDDEN) {
-//            getClockView().setActive(false);
-//            orientationListener.disable();
-//        }
-//    }
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        if (level >= TRIM_MEMORY_UI_HIDDEN) {
+            getCellLayout().stopListeningWidgetEvents();
+            //orientationListener.disable();
+        }
+    }
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        getClockView().setActive(true);
-//        orientationListener.enable();
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getCellLayout().startListeningWidgetEvents();
+        //orientationListener.enable();
+    }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {

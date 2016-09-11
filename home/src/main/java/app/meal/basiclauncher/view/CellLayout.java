@@ -112,6 +112,14 @@ public class CellLayout extends RelativeLayout {
         appWidgetHost.deleteAppWidgetId(id);
     }
 
+    public void startListeningWidgetEvents() {
+        appWidgetHost.startListening();
+    }
+
+    public void stopListeningWidgetEvents() {
+        appWidgetHost.stopListening();
+    }
+
     public void placeWidget(int id) {
         WidgetData data = new WidgetData(id, AppWidgetManager.getInstance(getContext()).getAppWidgetInfo(id));
         int position = choosePosition();
@@ -240,7 +248,8 @@ public class CellLayout extends RelativeLayout {
 
     private void onDragDropped() {
         if (layoutState.containsKey(currentPosition)) {
-            getViewByPosition(currentPosition).setTag(R.integer.tag_position, previousPosition);
+            View view = getViewByPosition(currentPosition);
+            if (view != null) view.setTag(R.integer.tag_position, previousPosition);
             layoutState.put(previousPosition, layoutState.remove(currentPosition));
         }
         viewBeingDragged.setTag(R.integer.tag_position, currentPosition);
@@ -252,8 +261,12 @@ public class CellLayout extends RelativeLayout {
         if (viewBeingDragged != null) {
             viewBeingDragged.setBackgroundDrawable(originalBackground);
             ItemData data = (ItemData) viewBeingDragged.getTag(R.integer.tag_app_data);
-            if (currentPosition < 0 && data instanceof WidgetData) {
-                deleteAppWidgetId(((WidgetData) data).getId());
+            if (data instanceof WidgetData) {
+                if (currentPosition < 0) {
+                    deleteAppWidgetId(((WidgetData) data).getId());
+                } else if (currentPosition == previousPosition) {
+                    // TODO widget resize mode
+                }
             }
             viewBeingDragged = null;
         }
@@ -369,9 +382,9 @@ public class CellLayout extends RelativeLayout {
                     break;
                 case Surface.ROTATION_0:
                 case Surface.ROTATION_180:
+                default:
             }
         }
-        //TODO obtain update info, perform update through local event
         return view;
     }
 
