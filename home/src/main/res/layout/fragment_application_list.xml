@@ -34,5 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:numColumns="auto_fit"
+        android:horizontalSpacing="@dimen/small_spacing"
+        android:verticalSpacing="@dimen/small_spacing"
         android:columnWidth="@dimen/item_text_width"/>
 </LinearLayout>

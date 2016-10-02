@@ -25,6 +25,6 @@
         android:shadowRadius="@integer/small_shadow"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/item_text_size"
-        android:singleLine="true"/>
+        android:maxLines="1"/>
 
 </RelativeLayout>

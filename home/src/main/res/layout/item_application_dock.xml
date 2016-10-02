@@ -26,7 +26,7 @@
         android:shadowRadius="@integer/small_shadow"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/item_text_size_smallest"
-        android:singleLine="true"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:maxLines="1" />
 
 </RelativeLayout>
